@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnergyTrack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            margin: 2rem auto;
+            max-width: 800px;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .data-section {
+            margin-bottom: 1.5rem;
+        }
+        .data-card {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #eaf7ea;
+            border-left: 5px solid #4CAF50;
+            border-radius: 4px;
+        }
+        .contact-button {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 2rem auto;
+            padding: 0.8rem;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .contact-button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #4CAF50;
+            color: white;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>EnergyTrack</h1>
+        <p>Monitoriza tu consumo energético en tiempo real</p>
+    </header>
+    
+    <div class="container">
+        <h2>Datos del Sistema</h2>
+        <div class="data-section">
+            <div class="data-card">
+                <strong>Consumo actual:</strong> <span id="currentConsumption">0</span> kWh
+            </div>
+            <div class="data-card">
+                <strong>Consumo total:</strong> <span id="totalConsumption">0</span> kWh
+            </div>
+            <div class="data-card">
+                <strong>Última actualización:</strong> <span id="lastUpdate">-</span>
+            </div>
+        </div>
+
+        <h2>Historial de Consumo</h2>
+        <canvas id="consumptionChart" width="400" height="200"></canvas>
+
+        <a href="mailto:soporte@energytrack.com" class="contact-button">Contactar con Soporte</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 EnergyTrack - Sistema de Monitorización</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Datos iniciales para el gráfico
+        const ctx = document.getElementById('consumptionChart').getContext('2d');
+        const consumptionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['10:00', '11:00', '12:00', '13:00', '14:00'],
+                datasets: [{
+                    label: 'Consumo en kWh',
+                    data: [5, 6, 7, 5, 8],
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hora'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Consumo (kWh)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Simular actualización de datos
+        function updateData() {
+            const current = (Math.random() * 10).toFixed(2);
+            const total = (Math.random() * 1000).toFixed(2);
+
+            document.getElementById('currentConsumption').textContent = current;
+            document.getElementById('totalConsumption').textContent = total;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+            // Agregar nuevos datos al gráfico
+            const newLabel = new Date().toLocaleTimeString();
+            consumptionChart.data.labels.push(newLabel);
+            consumptionChart.data.datasets[0].data.push(current);
+
+            // Limitar datos a los últimos 10 puntos
+            if (consumptionChart.data.labels.length > 10) {
+                consumptionChart.data.labels.shift();
+                consumptionChart.data.datasets[0].data.shift();
+            }
+
+            consumptionChart.update();
+        }
+
+        // Actualizar datos cada 5 segundos
+        setInterval(updateData, 5000);
+    </script>
+</body>
+</html>
